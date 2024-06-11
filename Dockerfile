@@ -11,7 +11,7 @@ WORKDIR /site
 
 VOLUME ["/site"]
 
-ENV HUGO_VERSION 0.125.5
+ENV HUGO_VERSION 0.127.0
 
 # Set execute permissions on the entrypoint & install Hugo
 RUN apk update \
