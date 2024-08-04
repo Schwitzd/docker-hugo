@@ -1,7 +1,7 @@
 # Use Alpine Linux as base image
 FROM alpine:latest
 
-LABEL maintainer="Daniel Schwitzegbel"
+LABEL maintainer="Daniel Schwitzgebel"
 
 # Copy the entrypoint script into the image
 COPY hugo.sh /usr/local/bin/hugo.sh
@@ -11,14 +11,19 @@ WORKDIR /site
 
 VOLUME ["/site"]
 
-ENV HUGO_VERSION 0.127.0
+# Environment variable for Hugo version
+ARG HUGO_VERSION
 
-# Set execute permissions on the entrypoint & install Hugo
+# Fetch the latest Hugo version if not specified
 RUN apk update \
     && apk --update --no-cache add \
       curl \
       ca-certificates \
-    && if [ "$(uname -m)" = "x86_64" ] ; then \
+      jq \
+    && if [ -z "$HUGO_VERSION" ]; then \
+            HUGO_VERSION=$(curl -s https://api.github.com/repos/gohugoio/hugo/releases/latest | jq -r '.tag_name' | tr -d 'v'); \
+        fi \
+    && if [ "$(uname -m)" = "x86_64" ]; then \
             HUGO_ARCH="amd64"; \
         elif [ "$(uname -m)" = "aarch64" ]; then \
             HUGO_ARCH="arm64"; \
@@ -27,7 +32,7 @@ RUN apk update \
     && mkdir /usr/local/hugo \
     && tar xzf /tmp/hugo.tar.gz -C /usr/local/hugo/ \
     && ln -s /usr/local/hugo/hugo /usr/local/bin/hugo \
-    && apk del curl \
+    && apk del curl jq \
     && rm -rf /tmp/*
 
 # Expose port 1313
