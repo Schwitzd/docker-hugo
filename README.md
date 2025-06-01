@@ -6,10 +6,10 @@ At startup, a script is run to check if a Hugo website exists on the mounted fol
 
 ## Getting Started
 
-Build the image
+Run the build to create your Docker image and load it into your local Docker environment.
 
 ```bash
-docker buildx build -t docker-hugo .
+docker buildx build --load -t docker-hugo .
 ```
 
 You can also specify a desired Hugo version during the build:
